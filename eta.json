@@ -2,9 +2,10 @@
   "controllerDirs": [],
   "css": {},
   "lifecycleDirs": [],
-  "modelDirs": [],
+  "modelDirs": ["models"],
   "redirects": {},
   "staticDirs": [],
   "transformerDirs": [],
-  "viewDirs": []
+  "viewDirs": [],
+  "name": "cre-auth-local"
 }
