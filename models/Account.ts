@@ -1,5 +1,5 @@
 import * as orm from "typeorm";
-import LocalAuthPerson from "./LocalAuthPerson";
+import Person from "../../cre-db-shared/models/Person";
 
 @orm.Index(["person"], { unique: true })
 @orm.Entity()
@@ -12,8 +12,8 @@ export default class Account {
     public id: number;
 
     @orm.JoinColumn()
-    @orm.OneToOne(t => LocalAuthPerson, p => p.account, { nullable: false })
-    public person: LocalAuthPerson;
+    @orm.OneToOne(t => Person, { nullable: false })
+    public person: Person;
 
     @orm.Column({ type: "varchar", nullable: false })
     public password: string;
