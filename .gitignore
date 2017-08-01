@@ -3,3 +3,4 @@
 package-lock.json
 eta.ts
 db.ts
+/static/js/node_modules

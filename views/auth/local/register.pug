@@ -1,0 +1,31 @@
+extends ./shared/layout.pug
+
+mixin form-group(name, codeName, inputType)
+    div.form-group
+        label.col-md-2.col-md-offset-1.control-label(for="input-" + codeName) #{name}
+        div.col-md-6
+            input.form-control(id="input-" + codeName, name=codeName, type=inputType, required)
+        div.col-md-3
+
+block auth_title
+    title Register | Crossroads
+
+block auth_body
+    div.col-xs-12.col-md-6.col-md-offset-3
+        div.text-center
+            h2 Register
+            h4 Create a new account
+            span#error #{error}
+            span#success #{success}
+        hr
+        form.form-horizontal#form-register(action="/api/auth/local/register", method="POST")
+            input(type="hidden", name="from", value=from)
+            +form-group("First Name", "firstName", "text")
+            +form-group("Last Name", "lastName", "text")
+            +form-group("Username", "username", "text")
+            +form-group("Email", "email", "email")
+            +form-group("Password", "password", "password")
+            +form-group("Confirm Password", "confirmPassword", "password")
+            div.form-group.text-center
+                div
+                    input.btn.btn-success.btn-submit(type="submit", value="Submit")

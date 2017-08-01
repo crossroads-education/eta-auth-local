@@ -1,9 +1,9 @@
 {
-  "name": "eta-cre-blank",
+  "name": "eta-auth-local",
   "version": "0.0.1",
-  "description": "Blank template for Eta v2.1 modules",
-  "homepage": "https://github.com/crossroads-education/eta-cre-blank",
-  "repository": "https://github.com/crossroads-education/eta-cre-blank.git",
+  "description": "Local authentication provider for Eta v2.1+",
+  "homepage": "https://github.com/crossroads-education/eta-auth-local",
+  "repository": "https://github.com/crossroads-education/eta-auth-local.git",
   "license": "MIT",
   "contributors": [
     "Alex Hicks <alex@crossroadseducation.org> (https://alexhicks.net)"
