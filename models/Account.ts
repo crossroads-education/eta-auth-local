@@ -1,4 +1,5 @@
 import * as orm from "typeorm";
+import * as eta from "../eta";
 import Person from "../../cre-db-shared/models/Person";
 
 @orm.Index(["person"], { unique: true })
@@ -20,4 +21,9 @@ export default class Account {
 
     @orm.Column({ type: "varchar", nullable: false })
     public salt: string;
+
+    public verifyPassword(password: string): boolean {
+        const hash: string = eta.crypto.hashPassword(password, this.salt);
+        return hash === password;
+    }
 }

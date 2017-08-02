@@ -2,7 +2,7 @@ import * as eta from "../eta";
 
 @eta.mvc.route("/auth/local")
 @eta.mvc.controller()
-export default class AuthLocalController extends eta.IAuthController {
+export default class AuthLocalController extends eta.IHttpController {
     private global(): void {
         this.res.view["success"] = this.req.query.success;
         this.res.view["error"] = this.req.query.error;
