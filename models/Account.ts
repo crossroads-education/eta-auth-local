@@ -22,6 +22,7 @@ export default class Account {
     @orm.Column({ type: "varchar", nullable: false })
     public salt: string;
 
+    // stop-generate
     public verifyPassword(password: string): boolean {
         const hash: string = eta.crypto.hashPassword(password, this.salt);
         return hash === password;
