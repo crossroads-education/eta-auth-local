@@ -1,13 +1,16 @@
 {
-  "controllerDirs": ["controllers"],
   "css": {},
-  "lifecycleDirs": [],
-  "modelDirs": ["models"],
+  "dirs": {
+    "controllers": ["controllers"],
+    "models": ["models"],
+    "staticFiles": ["static"],
+    "views": ["views"],
+    "lifecycleHandlers": [],
+    "requestTransformers": [],
+    "subpathHandlers": []
+  },
   "redirects": {
     "/home/logout": "/auth/local/logout"
   },
-  "staticDirs": ["static"],
-  "transformerDirs": [],
-  "viewDirs": ["views"],
   "name": "cre-auth-local"
 }
