@@ -3,7 +3,9 @@
   "css": {},
   "lifecycleDirs": [],
   "modelDirs": ["models"],
-  "redirects": {},
+  "redirects": {
+    "/home/logout": "/auth/local/logout"
+  },
   "staticDirs": ["static"],
   "transformerDirs": [],
   "viewDirs": ["views"],
