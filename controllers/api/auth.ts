@@ -21,7 +21,8 @@ export default class ApiAuthLocalController extends eta.IHttpController {
             this.redirect("/auth/local/login?error=Invalid%20login");
             return;
         }
-        this.req.session.userid = account.person.id;
+        this.req.session.userid = account.user.id;
+        if (!this.req.session.authFrom) this.req.session.authFrom = "/home/index";
         await this.saveSession();
         this.redirect(this.req.session.authFrom);
     }
@@ -30,6 +31,7 @@ export default class ApiAuthLocalController extends eta.IHttpController {
     @eta.mvc.get()
     public async logout(): Promise<void> {
         this.req.session.userid = undefined;
+        if (!this.req.session.authFrom) this.req.session.authFrom = "/home/index";
         await this.saveSession();
         this.redirect(this.req.session.authFrom);
     }
@@ -37,25 +39,16 @@ export default class ApiAuthLocalController extends eta.IHttpController {
     @eta.mvc.raw()
     @eta.mvc.post()
     @eta.mvc.params(["firstName", "lastName", "username", "email", "password"])
-    public async register(
-        firstName: string, lastName: string,
-        username: string, email: string,
-        password: string): Promise<void> {
-        const person: db.Person = new db.Person({
-            firstName,
-            lastName,
-            username,
-            email
-        });
-        await db.person().save(person);
+    public async register(params: Partial<db.User> & { password: string }): Promise<void> {
+        const user: db.User = db.user().create(params);
+        await db.user().save(user);
         const salt: string = eta.crypto.generateSalt();
-        const hashed: string = eta.crypto.hashPassword(password, salt);
-        const account: db.Account = new db.Account({
+        const hashed: string = eta.crypto.hashPassword(params.password, salt);
+        await db.account().save(db.account().create({
             password: hashed,
             salt,
-            person
-        });
-        await db.account().save(account);
+            user
+        }));
         this.redirect("/auth/local/login?success=Successfully%20registered.");
     }
 
@@ -65,8 +58,7 @@ export default class ApiAuthLocalController extends eta.IHttpController {
     @eta.mvc.params(["oldPassword", "newPassword"])
     public async changePassword(oldPassword: string, newPassword: string): Promise<void> {
         const account: db.Account = await db.account().createQueryBuilder("account")
-            .leftJoinAndSelect("account.person", "person")
-            .where(`"person"."id" = :id`, { id: this.req.session.userid })
+            .where(`"account"."userId" = :userId`, { userId: this.req.session.userid })
             .getOne();
         if (!account) {
             return this.redirect("/auth/local/changePassword?error=Something%20went%20wrong.");

@@ -11,6 +11,7 @@ export default class AuthLocalController extends eta.IHttpController {
     @eta.mvc.get()
     public async login(): Promise<void> {
         if (this.isLoggedIn()) {
+            eta.logger.trace(this.req.session.authFrom);
             this.redirect(this.req.session.authFrom);
             return;
         }
