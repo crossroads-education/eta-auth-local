@@ -6,11 +6,10 @@ import * as db from "../../db";
 export default class ApiAuthLocalController extends eta.IHttpController {
     @eta.mvc.raw()
     @eta.mvc.post()
-    @eta.mvc.params(["username", "password"])
     public async login(username: string, password: string): Promise<void> {
         const account: db.Account = await db.account().createQueryBuilder("account")
-            .leftJoinAndSelect("account.person", "person")
-            .where("person.username = :username", { username })
+            .leftJoinAndSelect("account.user", "user")
+            .where("user.username = :username", { username })
             .getOne();
         if (!account) {
             this.redirect("/auth/local/login?error=Invalid%20login");
@@ -38,7 +37,6 @@ export default class ApiAuthLocalController extends eta.IHttpController {
 
     @eta.mvc.raw()
     @eta.mvc.post()
-    @eta.mvc.params(["firstName", "lastName", "username", "email", "password"])
     public async register(params: Partial<db.User> & { password: string }): Promise<void> {
         const user: db.User = db.user().create(params);
         await db.user().save(user);
@@ -55,8 +53,7 @@ export default class ApiAuthLocalController extends eta.IHttpController {
     @eta.mvc.raw()
     @eta.mvc.post()
     @eta.mvc.authorize()
-    @eta.mvc.params(["oldPassword", "newPassword"])
-    public async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    public async changePassword({ oldPassword, newPassword }: { oldPassword: string, newPassword: string }): Promise<void> {
         const account: db.Account = await db.account().createQueryBuilder("account")
             .where(`"account"."userId" = :userId`, { userId: this.req.session.userid })
             .getOne();
