@@ -2,7 +2,7 @@ import * as orm from "typeorm";
 import * as eta from "../eta";
 import User from "../../cre-db-shared/models/User";
 
-@orm.Index(["person"], { unique: true })
+@orm.Index(["user"], { unique: true })
 @orm.Entity()
 export default class Account {
     @orm.PrimaryGeneratedColumn()
