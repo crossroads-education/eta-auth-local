@@ -6,7 +6,7 @@ import * as db from "../../db";
 export default class ApiAuthLocalController extends eta.IHttpController {
     @eta.mvc.raw()
     @eta.mvc.post()
-    public async login(username: string, password: string): Promise<void> {
+    public async login({ username, password }: { username: string, password: string }): Promise<void> {
         const account: db.Account = await db.account().createQueryBuilder("account")
             .leftJoinAndSelect("account.user", "user")
             .where("user.username = :username", { username })
