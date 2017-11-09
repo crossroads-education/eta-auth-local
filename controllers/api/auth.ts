@@ -23,7 +23,13 @@ export default class ApiAuthLocalController extends eta.IHttpController {
         this.req.session.userid = account.user.id;
         if (!this.req.session.authFrom) this.req.session.authFrom = "/home/index";
         await this.saveSession();
-        this.redirect(this.req.session.authFrom);
+        if (account.shouldForceReset) {
+            this.req.session.beforeAuth = this.req.session.authFrom;
+            await this.saveSession();
+            this.redirect("/auth/local/changePassword?error=You%20must%20change%20your%20password%20before%20logging%20in.");
+        } else {
+            this.redirect(this.req.session.authFrom);
+        }
     }
 
     @eta.mvc.raw()
@@ -59,11 +65,15 @@ export default class ApiAuthLocalController extends eta.IHttpController {
             .getOne();
         if (!account) {
             return this.redirect("/auth/local/changePassword?error=Something%20went%20wrong.");
+        } else {
+            this.req.session.authFrom = this.req.session.beforeAuth;
+            await this.saveSession();
         }
         const hashed: string = eta.crypto.hashPassword(oldPassword, account.salt);
         if (hashed !== account.password) {
             return this.redirect("/auth/local/changePassword?error=Password%20incorrect.");
         }
+        account.shouldForceReset = false;
         account.salt = eta.crypto.generateSalt();
         account.password = eta.crypto.hashPassword(newPassword, account.salt);
         await db.account().save(account);

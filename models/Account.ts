@@ -18,6 +18,9 @@ export default class Account {
     @orm.Column({ type: "varchar", nullable: false })
     public salt: string;
 
+    @orm.Column({ type: "boolean", nullable: false, default: "f", name: "should_force_reset" })
+    public shouldForceReset: boolean;
+
     // stop-generate
     public verifyPassword(password: string): boolean {
         const hash: string = eta.crypto.hashPassword(password, this.salt);
