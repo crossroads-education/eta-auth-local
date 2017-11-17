@@ -2,11 +2,10 @@ import * as orm from "typeorm";
 import * as eta from "../eta";
 import User from "../../cre-db-shared/models/User";
 
-@orm.Index(["user"], { unique: true })
 @orm.Entity()
 export default class Account {
-    @orm.PrimaryGeneratedColumn()
-    public id: number;
+    @orm.PrimaryColumn()
+    public userId: number;
 
     @orm.JoinColumn()
     @orm.OneToOne(t => User, { nullable: false })
@@ -19,7 +18,16 @@ export default class Account {
     public salt: string;
 
     @orm.Column({ type: "boolean", nullable: false, default: "f", name: "should_force_reset" })
-    public shouldForceReset: boolean;
+    public shouldForceReset = false;
+
+    public toCacheObject(): any {
+        return {
+            userId: this.user.id,
+            password: this.password,
+            salt: this.salt,
+            should_force_reset: this.shouldForceReset
+        };
+    }
 
     // stop-generate
     public verifyPassword(password: string): boolean {
