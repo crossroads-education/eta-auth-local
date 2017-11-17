@@ -80,4 +80,17 @@ export default class ApiAuthLocalController extends eta.IHttpController {
         await db.account().save(account);
         this.redirect("/auth/local/login?success=Successfully%20changed%20password.");
     }
+
+    @eta.mvc.flags(["seed"])
+    @eta.mvc.raw()
+    @eta.mvc.authorize(["all"])
+    @eta.mvc.get()
+    public async seed(seeder: Seeder): Promise<void> {
+        if (!seeder) return;
+        const salt: string = eta.crypto.generateSalt();
+        const password: string = eta.crypto.hashPassword("user", salt);
+        await seeder.seed(db.account(), seeder.rows.User.map(user =>
+            db.account().create({ user, salt, password })
+        ), `"userId"`);
+    }
 }
