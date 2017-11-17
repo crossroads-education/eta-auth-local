@@ -1,4 +1,4 @@
-import * as eta from "../eta";
+import * as eta from "../../eta";
 
 @eta.mvc.route("/auth/local")
 @eta.mvc.controller()

@@ -1,5 +1,6 @@
-import * as eta from "../../eta";
-import * as db from "../../db";
+import * as eta from "../../../eta";
+import * as db from "../../../db";
+import Seeder from "../../../../cre-db-shared/lib/Seeder";
 
 @eta.mvc.route("/api/auth/local")
 @eta.mvc.controller()
