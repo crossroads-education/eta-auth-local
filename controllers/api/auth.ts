@@ -6,8 +6,7 @@ import * as db from "../../db";
 export default class ApiAuthLocalController extends eta.IHttpController {
     @eta.mvc.raw()
     @eta.mvc.post()
-    @eta.mvc.params(["username", "password"])
-    public async login(username: string, password: string): Promise<void> {
+    public async login({ username, password }: { username: string, password: string }): Promise<void> {
         const account: db.Account = await db.account().createQueryBuilder("account")
             .leftJoinAndSelect("account.person", "person")
             .where("person.username = :username", { username })
@@ -36,20 +35,11 @@ export default class ApiAuthLocalController extends eta.IHttpController {
 
     @eta.mvc.raw()
     @eta.mvc.post()
-    @eta.mvc.params(["firstName", "lastName", "username", "email", "password"])
-    public async register(
-        firstName: string, lastName: string,
-        username: string, email: string,
-        password: string): Promise<void> {
-        const person: db.Person = new db.Person({
-            firstName,
-            lastName,
-            username,
-            email
-        });
+    public async register(partial: Partial<db.Person> & { password: string; }): Promise<void> {
+        const person: db.Person = new db.Person(partial);
         await db.person().save(person);
         const salt: string = eta.crypto.generateSalt();
-        const hashed: string = eta.crypto.hashPassword(password, salt);
+        const hashed: string = eta.crypto.hashPassword(partial.password, salt);
         const account: db.Account = new db.Account({
             password: hashed,
             salt,
@@ -62,8 +52,7 @@ export default class ApiAuthLocalController extends eta.IHttpController {
     @eta.mvc.raw()
     @eta.mvc.post()
     @eta.mvc.authorize()
-    @eta.mvc.params(["oldPassword", "newPassword"])
-    public async changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    public async changePassword({ oldPassword, newPassword }: { oldPassword: string, newPassword: string }): Promise<void> {
         const account: db.Account = await db.account().createQueryBuilder("account")
             .leftJoinAndSelect("account.person", "person")
             .where(`"person"."id" = :id`, { id: this.req.session.userid })
