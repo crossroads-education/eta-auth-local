@@ -1,4 +1,4 @@
-import * as eta from "../eta";
+import * as eta from "../../eta";
 
 @eta.mvc.route("/auth/local")
 @eta.mvc.controller()
@@ -11,6 +11,7 @@ export default class AuthLocalController extends eta.IHttpController {
     @eta.mvc.get()
     public async login(): Promise<void> {
         if (this.isLoggedIn()) {
+            eta.logger.trace(this.req.session.authFrom);
             this.redirect(this.req.session.authFrom);
             return;
         }

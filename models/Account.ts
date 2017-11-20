@@ -1,26 +1,33 @@
 import * as orm from "typeorm";
 import * as eta from "../eta";
-import Person from "../../cre-db-shared/models/Person";
+import User from "../../cre-db-shared/models/User";
 
-@orm.Index(["person"], { unique: true })
 @orm.Entity()
 export default class Account {
-    public constructor(init: Partial<Account>) {
-        Object.assign(this, init);
-    }
-
-    @orm.PrimaryGeneratedColumn()
-    public id: number;
+    @orm.PrimaryColumn()
+    public userId: number;
 
     @orm.JoinColumn()
-    @orm.OneToOne(t => Person, { nullable: false })
-    public person: Person;
+    @orm.OneToOne(t => User, { nullable: false })
+    public user: User;
 
     @orm.Column({ type: "varchar", nullable: false })
     public password: string;
 
     @orm.Column({ type: "varchar", nullable: false })
     public salt: string;
+
+    @orm.Column({ type: "boolean", nullable: false, default: "f", name: "should_force_reset" })
+    public shouldForceReset = false;
+
+    public toCacheObject(): any {
+        return {
+            userId: this.user.id,
+            password: this.password,
+            salt: this.salt,
+            should_force_reset: this.shouldForceReset
+        };
+    }
 
     // stop-generate
     public verifyPassword(password: string): boolean {
